@@ -10,11 +10,15 @@ from discord.ext import tasks
 from utils.directory import directory
 
 app = web.Application()
-# routes = web.RouteTableDef()
-log = logging.getLogger()
+routes = web.RouteTableDef()
+log = logging.getLogger(__name__)
 
 
 class WebServer:
+    @routes.get('/')
+    async def hello_world(self):
+        return web.Response(text="Hello World")
+
     def __init__(self, client: interaction.Client):
         self.client = client
 
@@ -23,32 +27,13 @@ class WebServer:
                 os.path.join(directory, "views")
             ) if file.endswith(".py")
         ]
-        for view in views:
-            spec = importlib.util.find_spec(view)
-            if spec is None:
-                log.error("Extension Not Found: {0}".format(view))
-                continue
+        app.add_routes(routes)
 
-            lib = importlib.util.module_from_spec(spec)
-            try:
-                spec.loader.exec_module(lib)  # type: ignore
-            except Exception as e:
-                log.error("Extension Failed: {0} ({1})".format(view, e.__class__.__name__))
-                continue
 
-            try:
-                routes = getattr(lib, 'routes')
-                setattr(lib, 'bot', self.client)
-                setattr(lib, 'bot', self.client)
-            except AttributeError:
-                log.error("No Entry Point Error: {0}".format(view))
-                continue
-
-            try:
-                app.add_routes(routes)
-            except Exception as e:
-                log.error("Extension Failed: {0} ({1})".format(view, e.__class__.__name__))
-                continue
+    @interaction.listener()
+    async def on_ready(self):
+        print("Ready")
+        self.web_server.start()
 
     @tasks.loop()
     async def web_server(self):
@@ -57,10 +42,6 @@ class WebServer:
         site = web.TCPSite(runner, host='0.0.0.0', port=8080)
         await site.start()
 
-    @web_server.before_loop
-    async def web_server_before_loop(self):
-        await self.client.wait_until_ready()
 
-
-async def setup(client: interaction.Client):
+def setup(client: interaction.Client):
     client.add_interaction_cog(WebServer)
