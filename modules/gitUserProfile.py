@@ -1,17 +1,31 @@
 import aiohttp
 import asyncio
 import datetime
-import typing
-from typing import Optional
+
+
+from utils.fileOpen import read_file
 
 class GitUserProfile():
-    """_summary_
-    깃허브 유저의 데이터를 aiohttp를 통해 받아오는 클래스
-    
-    """
-    def __init__(self):
+    def __init__(self) -> None:
         pass
     
-    def aio(self):
-        
-        pass
+    async def loadGitUserData(self, user, date) -> int:
+        async with aiohttp.ClientSession() as session:
+            # with open(r"config\token.txt", "r") as f:
+            #     token = f.read()
+
+            token = await read_file(r"config\token.txt")
+            with open("assats\gitQuery.graphql", "r") as f:
+                query = f.read()
+
+            header = { "Authorization" : f"Bearer {token}"}
+            variable = {
+                "login" : f"{user}",
+                "from" : "2023-05-02T16:59:24Z", #2023-05-02T16:59:24Z
+                "to" : f"{date}"
+            }
+
+            async with session.post("https://api.github.com/graphql", headers=header , json = {"query" : query, "variables" : variable}) as response:
+                result = await response.json()
+
+            return result
