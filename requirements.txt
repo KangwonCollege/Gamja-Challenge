@@ -1,6 +1,7 @@
 SQLAlchemy
 aiohttp
 aiofiles
+aiomysql
 asyncio
 discord.py
 Discord-Extension-Interaction

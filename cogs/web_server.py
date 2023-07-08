@@ -6,6 +6,7 @@ import os
 from aiohttp import web
 from discord.ext import interaction
 from discord.ext import tasks
+from sqlalchemy.orm import sessionmaker
 
 from utils.directory import directory
 
@@ -43,5 +44,5 @@ class WebServer:
         await site.start()
 
 
-def setup(client: interaction.Client):
+def setup(client: interaction.Client, factory: sessionmaker):
     client.add_interaction_cog(WebServer)
