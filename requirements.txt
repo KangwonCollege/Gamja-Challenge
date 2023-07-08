@@ -1,1 +1,5 @@
 SQLAlchemy
+aiohttp
+asyncio
+discord.py
+Discord-Extension-Interaction
