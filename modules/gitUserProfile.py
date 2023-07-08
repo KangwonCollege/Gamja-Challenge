@@ -12,6 +12,8 @@ class GitUserProfile():
         pass
     
     async def loadGitUserData(self, user, date) -> int:
+        git_url = "https://api.github.com/graphql"
+        
         async with aiohttp.ClientSession() as session:
 
             token = get_config()["git_token"]
@@ -21,11 +23,11 @@ class GitUserProfile():
             header = { "Authorization" : f"Bearer {token}"}
             variable = {
                 "login" : f"{user}",
-                "from" : "2023-05-02T16:59:24Z", #2023-05-02T16:59:24Z
+                "from" : "2023-05-02T16:59:24Z", # iso 8601(2023-05-02T16:59:24Z)
                 "to" : f"{date}"
             }
 
-            async with session.post("https://api.github.com/graphql", headers=header , json = {"query" : query, "variables" : variable}) as response:
+            async with session.post(git_url, headers=header , json = {"query" : query, "variables" : variable}) as response:
                 result = await response.json()
 
         return result
