@@ -1,20 +1,28 @@
-import requests
 import datetime
-import json
-import dataclasses
+import asyncio
 
-with open(r"config\token.txt", "r") as f:
-    token = f.read()
+from discord import Intents
 
-with open("test\q.graphql", "r") as f:
-    q = f.read()
+from modules.gitUserData import GitUserData
+from modules.gitUserProfile import GitUserProfile
+from modules.solvedUserProfile import SolvedUserProfile
+
+async def main():
+    git_user_data = GitUserData(name="Mule129")
+    
+    git_user_data.date = datetime.datetime.utcnow().isoformat()
+    git_user_profile = GitUserProfile()
+    git_user_data = await git_user_profile.loadGitUserData(git_user_data.name, git_user_data.date)
+    print(git_user_data)
+    print(datetime.datetime.utcnow().isoformat())
+    date_ = datetime.timedelta(days=30)
+    date_ = datetime.datetime.now() - date_
+    print(date_.isoformat())
+    
+    solved_user_profile = SolvedUserProfile()
+    data_solved = await solved_user_profile.loadSolvedUserData("mule129")
+    print(data_solved)
     
 
-header = { "Authorization" : f"Bearer {token}"}
-with open("test\data.json", "r") as f:
-    variable = json.load(f)
-    
-
-result = requests.post("https://api.github.com/graphql", headers=header , json = {"query" : q, "variables" : variable})
-
-print(result.json())
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())

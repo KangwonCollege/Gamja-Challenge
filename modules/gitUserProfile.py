@@ -4,6 +4,8 @@ import datetime
 
 
 from utils.fileOpen import read_file
+from utils.getConfig import get_config
+from utils.directory import directory
 
 class GitUserProfile():
     def __init__(self) -> None:
@@ -11,11 +13,9 @@ class GitUserProfile():
     
     async def loadGitUserData(self, user, date) -> int:
         async with aiohttp.ClientSession() as session:
-            # with open(r"config\token.txt", "r") as f:
-            #     token = f.read()
 
-            token = await read_file(r"config\token.txt")
-            with open("assats\gitQuery.graphql", "r") as f:
+            token = get_config()["git_token"]
+            with open(directory+"gitQuery.graphql", "r") as f:
                 query = f.read()
 
             header = { "Authorization" : f"Bearer {token}"}
