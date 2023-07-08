@@ -1,6 +1,4 @@
 import logging
-import importlib
-import importlib.util
 import os
 
 from aiohttp import web
@@ -30,7 +28,6 @@ class WebServer:
         ]
         app.add_routes(routes)
 
-
     @interaction.listener()
     async def on_ready(self):
         print("Ready")
@@ -45,4 +42,4 @@ class WebServer:
 
 
 def setup(client: interaction.Client, factory: sessionmaker):
-    client.add_interaction_cog(WebServer)
+    client.add_interaction_cog(WebServer(client))
