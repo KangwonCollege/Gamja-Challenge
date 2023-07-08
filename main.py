@@ -5,6 +5,7 @@ from discord import Intents
 
 from modules.gitUserData import GitUserData
 from modules.gitUserProfile import GitUserProfile
+from modules.solvedUserProfile import SolvedUserProfile
 
 async def main():
     git_user_data = GitUserData(name="Mule129")
@@ -17,6 +18,11 @@ async def main():
     date_ = datetime.timedelta(days=30)
     date_ = datetime.datetime.now() - date_
     print(date_.isoformat())
+    
+    solved_user_profile = SolvedUserProfile()
+    data_solved = await solved_user_profile.loadSolvedUserData("mule129")
+    print(data_solved)
+    
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())

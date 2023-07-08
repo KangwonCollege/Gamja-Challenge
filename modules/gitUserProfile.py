@@ -28,4 +28,4 @@ class GitUserProfile():
             async with session.post("https://api.github.com/graphql", headers=header , json = {"query" : query, "variables" : variable}) as response:
                 result = await response.json()
 
-            return result
+        return result
