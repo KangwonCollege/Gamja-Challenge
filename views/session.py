@@ -2,11 +2,10 @@ import discord
 import asyncio
 from aiohttp import web
 
-
-routes: web.RouteTableDef
+routes = web.RouteTableDef()
 bot: discord.Client
 
 
 @routes.get('/')
-async def hello_world():
+async def hello_world(request):
     return web.Response(text="Hello World")
