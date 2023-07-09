@@ -44,7 +44,6 @@ class WebServer:
 
     @interaction.listener()
     async def on_ready(self):
-        print("ready")
         self.web_server.start()
 
     @tasks.loop()

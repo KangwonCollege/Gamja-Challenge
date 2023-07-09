@@ -6,6 +6,9 @@ routes = web.RouteTableDef()
 bot: discord.Client
 
 
-@routes.get('/')
-async def hello_world(request):
-    return web.Response(text="Hello World")
+@routes.get('/login/github')
+async def github_login(request: web.Request):
+    return web.HTTPFound(
+        f"https://github.com/login/oauth/authorize?"
+        f"{}"
+    )
