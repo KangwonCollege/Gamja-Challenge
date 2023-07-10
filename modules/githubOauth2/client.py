@@ -1,17 +1,18 @@
 from .scope import Scope
+from .access_token import AccessToken
+
+from modules.requests import Requests
 from utils.pointerQueue import PointerQueue
 
 
 class GithubOAuth2(PointerQueue):
-    def __init__(
-            self,
-            client_id: str,
-            client_secret: str
-    ):
+    def __init__(self, client_id: str, client_secret: str):
+        super().__init__()
         self.client_id = client_id
         self.client_secret = client_secret
 
         self.BASE = "https://github.com"
+        self.requests = Requests()
 
     def add_parameter(
             self,
@@ -35,3 +36,40 @@ class GithubOAuth2(PointerQueue):
         path = "/login/oauth/authorize"
         url = self.BASE + path
 
+        _scope = [v.value for v in scope]
+
+        position_value = self._add_pointer(f"{url}?")
+        self.add_parameter(position_value, "client_id", self.client_id)
+        if redirect_url is not None:
+            self.add_parameter(position_value, "redirect_uri", redirect_url)
+        if login is not None:
+            self.add_parameter(position_value, "login", login)
+        if state is not None:
+            self.add_parameter(position_value, "state", state)
+        if allow_signup is not None:
+            self.add_parameter(position_value, "allow_signup", str(allow_signup))
+        self.add_parameter(position_value, "scope", "%20".join(_scope), ended=True)
+        return self._get_pointer(position_value)
+
+    async def token(
+            self,
+            code: str,
+            redirect_url: str = None
+    ):
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "code": code
+        }
+        headers = {
+            "Accept": "application/json"
+        }
+        if redirect_url is not None:
+            data["redirect_uri"] = redirect_url
+        response = await self.requests.post(
+            "https://github.com/login/oauth/access_token",
+            data=data,
+            headers=headers,
+            raise_on=True
+        )
+        return AccessToken.from_payload(response.data)
