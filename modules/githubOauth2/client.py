@@ -1,18 +1,22 @@
-from .scope import Scope
+import asyncio
+
 from .access_token import AccessToken
+from .scope import Scope
+from .user import User
 
 from modules.requests import Requests
 from utils.pointerQueue import PointerQueue
 
 
 class GithubOAuth2(PointerQueue):
-    def __init__(self, client_id: str, client_secret: str):
+    def __init__(self, client_id: str, client_secret: str, loop: asyncio.AbstractEventLoop = None):
         super().__init__()
         self.client_id = client_id
         self.client_secret = client_secret
 
         self.BASE = "https://github.com"
-        self.requests = Requests()
+        self.API_BASE = "https://api.github.com"
+        self.requests = Requests(loop=loop)
 
     def add_parameter(
             self,
@@ -74,5 +78,17 @@ class GithubOAuth2(PointerQueue):
         )
         return AccessToken.from_payload(response.data)
 
-    async def user(self, access_token: AccessToken):
-        return
+    async def user(self, access_token: AccessToken, login: str = None):
+        url = self.API_BASE + "/user"
+        if login is not None:
+            url += "s/{}".format(login)
+
+        headers = {
+            "Authorization": f"{access_token.token_type} {access_token.access_token}"
+        }
+        response = await self.requests.get(
+            url,
+            headers=headers,
+            raise_on=True
+        )
+        return User(response.data)

@@ -15,8 +15,9 @@ log = logging.getLogger(__name__)
 
 
 class WebServer:
-    def __init__(self, client: interaction.Client):
+    def __init__(self, client: interaction.Client, factory: sessionmaker):
         self.client = client
+        self.factory = factory
         self.app = web.Application()
 
         views = [
@@ -55,4 +56,4 @@ class WebServer:
 
 
 def setup(client: interaction.Client, factory: sessionmaker):
-    client.add_interaction_cog(WebServer(client))
+    client.add_interaction_cog(WebServer(client, factory))
