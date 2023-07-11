@@ -73,3 +73,6 @@ class GithubOAuth2(PointerQueue):
             raise_on=True
         )
         return AccessToken.from_payload(response.data)
+
+    async def user(self, access_token: AccessToken):
+        return
