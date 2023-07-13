@@ -23,7 +23,7 @@ async def github_login(request: web.Request):
     state = request.rel_url.query.get('state')
     return web.HTTPFound(
         oauth2_client.authorize(
-            redirect_url="https://" + request.host + "/login/callback",
+            redirect_uri="https://" + request.host + "/login/callback",
             scope=[Scope.user],
             state=state
         )
