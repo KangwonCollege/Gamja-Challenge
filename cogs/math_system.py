@@ -1,22 +1,24 @@
 import discord
 import sqlalchemy.ext.asyncio
 from discord.ext import interaction
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import select, Engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from models.database.userInfo import UserInfo
 
 
 class MathSystem:
-    def __init__(self) -> None:
-        pass
+
+    def __init__(self, bot: interaction.Client, factory: sessionmaker) -> None:
+        self.client = bot
+        self.factory = factory
 
     @interaction.command(name="랭크확인", description="자신의 랭크를 확인할 수 있습니다")
     async def check_lank(self, ctx: interaction.ApplicationContext,
-                         engine: sqlalchemy.ext.asyncio.create_async_engine) -> None:
+                         engine: Engine) -> None:
         user_info = UserInfo()
 
-        session = Session(engine)
+        session = sessionmaker(bind=engine)
         stmt = select(UserInfo).where(UserInfo.id.in_([ctx.id]))
         for user in session.scalars(stmt):
             print(user)
