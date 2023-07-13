@@ -14,30 +14,31 @@ class AddUser:
     @interaction.option(
         name="type",
         choices=[
-            interaction.CommandOptionChoice("백준", "깃허브"),
-            interaction.CommandOptionChoice("깃허브", "백준")],
-        description="ID 유형을 입력해주세요"
+            interaction.CommandOptionChoice(name="백준", value="beakjoon"),
+            interaction.CommandOptionChoice(name="깃허브", value="github")
+        ],
+        description="등록할 계정의 유형을 선택해주세요."
     )
     @interaction.option(name="id", description="시즌 등록을 위한 아이디를 입력해주세요")
-    async def addGitUser(self, ctx: interaction.ApplicationContext, type: str, user: str):
+    async def add_user(self, ctx: interaction.ApplicationContext, account_type: str):
         user_info = UserInfo()
         embed = discord.Embed()
-        if False:  # solved ac => Not Found // Git GraphQL => "data" : {"User" : null}s
-            embed.add_field(
-                name="ID 등록 실패 :(",
-                value="없는 ID 입니다. ID를 다시 한번 확인해주세요"
-            )
-            await ctx.send(embad=embed)
-            return
+        # if False:  # solved ac => Not Found // Git GraphQL => "data" : {"User" : null}s
+        #     embed.add_field(
+        #         name="ID 등록 실패 :(",
+        #         value="없는 ID 입니다. ID를 다시 한번 확인해주세요"
+        #     )
+        #     await ctx.send(embad=embed)
+        #     return
 
-        if type == "백준":
-            embed.add_field(name="Git ID 등록 완료 :D", value="github user info load")
-            user_info.github_id = user
-        else:
-            user_info.beakjoon_id = user
-            embed.add_field(name="Beakjoon ID 등록 완료 :D", value="beackjoon user info load")
+        # if type == "백준":
+        #     embed.add_field(name="Git ID 등록 완료 :D", value="github user info load")
+        #     user_info.github_id = user
+        # else:
+        #     user_info.beakjoon_id = user
+        #     embed.add_field(name="Beakjoon ID 등록 완료 :D", value="beackjoon user info load")
 
-        await ctx.send(embed=embed)  # type이 반대로 뜨는 문제가 있어요
+        await ctx.send(embed=embed)
 
 
 def setup(client: interaction.Client, factory: sessionmaker):
