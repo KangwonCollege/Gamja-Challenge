@@ -21,7 +21,7 @@ if __name__ == "__main__":
     bot = interaction.Client(
         intents=discord.Intents.default(),
         enable_debug_events=True,
-        global_sync_command=False
+        global_sync_command=True
     )
 
     # Database
