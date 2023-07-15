@@ -9,13 +9,14 @@ from typing import Optional
 from cogs.base_cog import BaseCog
 from modules import githubOauth2
 from modules import errors
+from repository.user_repository import UserRepository
 from utils.getConfig import get_config
 
 parser = get_config()
 
 
-class AddUser(BaseCog):
-    def __init__(self, bot: interaction.client, factory: async_sessionmaker) -> None:
+class AddUser(BaseCog, UserRepository):
+    def __init__(self, bot: interaction.Client, factory: async_sessionmaker) -> None:
         super().__init__(bot, factory)
         self.bot = bot
         self.generated_state_key = []
@@ -23,6 +24,12 @@ class AddUser(BaseCog):
             client_id=parser.get('Github', 'client_id'),
             client_secret=parser.get('Github', 'client_secret')
         )
+
+        self.bot.add_setup_hook(self.setup_hook)
+
+    async def setup_hook(self):
+        # Circuital Issue: Session and connector has to use same event loop
+        self.client.requests.loop = self.bot.loop
 
     def generate_state_key(self) -> str:
         state_key = ""
@@ -38,12 +45,13 @@ class AddUser(BaseCog):
     async def add_user(self, ctx: interaction.ApplicationContext, account_type: str):
         pass
 
-    @add_user.subcommand(name="깃허브", description="이번 시즌에  정보를 입력해주세요")
+    @add_user.subcommand(name="깃허브", description="깃허브 계정으로 시즌에 참가하려면 시즌등록 명령어를 이용해주세요.")
     async def github_add_user(self, ctx: interaction.ApplicationContext):
-        if await self.is_exist_participant(ctx.author):
-            embed = discord.Embed(title="감자 챌린지(Gamja Challenge)", description="이미 등록된 계정입니다.")
-            await ctx.send(embed=embed)
-            return
+        await ctx.defer(hidden=True)
+        if not await self.is_exist_participant(ctx.author):
+            user_info = await self.github_register_user(ctx)
+        else:
+            user_info = await self.get_participant(ctx.author)
 
     async def github_register_user(self, ctx: interaction.ApplicationContext) -> Optional[githubOauth2.User]:
         embed = self.embed_init
@@ -61,14 +69,14 @@ class AddUser(BaseCog):
             interaction.Button(
                 style=discord.ButtonStyle.link,
                 url=self.client.authorize(
-                    redirect_uri="https://localhost:8080/session/callback",
+                    redirect_uri="http://localhost:8080/login/callback",
                     scope=[githubOauth2.Scope.user],
                     state=state,
                 ),
                 label="로그인"
             )
         ])
-        await ctx.send(embed=embed, components=[components])
+        await ctx.edit(embed=embed, components=[components])
         _, access_token = await self.bot.wait_for(
             "login_success",
             check=lambda process_state, _: process_state == state
@@ -106,9 +114,10 @@ class AddUser(BaseCog):
             inline=embed.fields[0].inline
         )
         await ctx.edit(embed=embed, components=[components])
+        print(user_info.name)
         return user_info
 
-    @add_user.subcommand(name="백준", description="")
+    @add_user.subcommand(name="백준", description="백준 계정으로 시즌에 참가하려면 시즌등록 명령어를 이용해주세요.")
     async def beakjoon_add_user(self, ctx: interaction.ApplicationContext):
         if await self.is_exist_participant(ctx.author):
             embed = discord.Embed(title="감자 챌린지(Gamja Challenge)", description="이미 등록된 계정입니다.")

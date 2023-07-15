@@ -59,7 +59,7 @@ class GithubOAuth2(PointerQueue):
             self,
             code: str,
             redirect_uri: str = None
-    ):
+    ) -> AccessToken:
         data = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
