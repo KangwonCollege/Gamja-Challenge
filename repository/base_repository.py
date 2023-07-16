@@ -8,7 +8,6 @@ T = TypeVar('T')
 class BaseRepository:
     def __init__(self, factory: async_sessionmaker):
         self.factory = factory
-        super().__init__(factory)
 
     @property
     def session(self):
