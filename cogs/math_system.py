@@ -8,7 +8,6 @@ from models.database.userInfo import UserInfo
 
 
 class MathSystem:
-
     def __init__(self, bot: interaction.Client, factory: sessionmaker) -> None:
         self.client = bot
         self.factory = factory

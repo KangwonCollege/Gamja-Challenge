@@ -1,7 +1,8 @@
-SQLAlchemy
-aiohttp
-aiofiles
+SQLAlchemy~=2.0.18
+aiohttp~=3.8.4
+aiofiles~=23.1.0
 aiomysql
-asyncio
+asyncio~=3.4.3
 discord.py
 Discord-Extension-Interaction
+discord~=2.3.1
