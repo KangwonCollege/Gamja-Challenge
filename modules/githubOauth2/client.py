@@ -32,7 +32,7 @@ class GithubOAuth2(PointerQueue):
     def authorize(
             self,
             scope: list[Scope],
-            redirect_url: str = None,
+            redirect_uri: str = None,
             login: str = None,
             state: str = None,
             allow_signup: bool = True
@@ -44,8 +44,8 @@ class GithubOAuth2(PointerQueue):
 
         position_value = self._add_pointer(f"{url}?")
         self.add_parameter(position_value, "client_id", self.client_id)
-        if redirect_url is not None:
-            self.add_parameter(position_value, "redirect_uri", redirect_url)
+        if redirect_uri is not None:
+            self.add_parameter(position_value, "redirect_uri", redirect_uri)
         if login is not None:
             self.add_parameter(position_value, "login", login)
         if state is not None:
@@ -58,8 +58,8 @@ class GithubOAuth2(PointerQueue):
     async def token(
             self,
             code: str,
-            redirect_url: str = None
-    ):
+            redirect_uri: str = None
+    ) -> AccessToken:
         data = {
             "client_id": self.client_id,
             "client_secret": self.client_secret,
@@ -68,8 +68,8 @@ class GithubOAuth2(PointerQueue):
         headers = {
             "Accept": "application/json"
         }
-        if redirect_url is not None:
-            data["redirect_uri"] = redirect_url
+        if redirect_uri is not None:
+            data["redirect_uri"] = redirect_uri
         response = await self.requests.post(
             "https://github.com/login/oauth/access_token",
             data=data,

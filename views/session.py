@@ -23,7 +23,7 @@ async def github_login(request: web.Request):
     state = request.rel_url.query.get('state')
     return web.HTTPFound(
         oauth2_client.authorize(
-            redirect_url="https://" + request.host + "/login/callback",
+            redirect_uri="https://" + request.host + "/login/callback",
             scope=[Scope.user],
             state=state
         )
@@ -37,6 +37,9 @@ async def github_login_callback(request: web.Request):
     if code is None or state is None:
         return web.HTTPForbidden()
 
+    # Circuital Issue: Session and connector has to use same event loop
+    oauth2_client.requests.loop = bot.loop
+
     try:
         access_token = await oauth2_client.token(
             code=code
@@ -48,7 +51,7 @@ async def github_login_callback(request: web.Request):
             "process": "Access Token"
         }, status=error.response_code)
 
-    if access_token.token == "":
+    if access_token.access_token == "":
         return web.HTTPFound("https://" + request.host + "/login/github",)
 
     event = "login_success"
@@ -84,4 +87,4 @@ async def github_login_callback(request: web.Request):
         pass
     else:
         await coroutine(state, access_token)
-    return web.Response("성공적! 페이지를 닫습니다.")
+    return web.Response(body="성공적! 페이지를 닫습니다.")
