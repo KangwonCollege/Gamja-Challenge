@@ -1,6 +1,6 @@
 from enum import Enum
 
 
-class BeakjoonUserLevelType(Enum):
+class BaekjoonUserLevelType(Enum):
     START = 0
     CURRENT = 1

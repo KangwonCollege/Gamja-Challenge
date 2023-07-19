@@ -118,13 +118,13 @@ class AddUser(BaseCog, UserRepository):
         return user_info
 
     @add_user.subcommand(name="백준", description="백준 계정으로 시즌에 참가하려면 시즌등록 명령어를 이용해주세요.")
-    async def beakjoon_add_user(self, ctx: interaction.ApplicationContext):
+    async def baekjoon_add_user(self, ctx: interaction.ApplicationContext):
         if await self.is_exist_participant(ctx.author):
             embed = discord.Embed(title="감자 챌린지(Gamja Challenge)", description="이미 등록된 계정입니다.")
             await ctx.send(embed=embed)
             return
 
-    async def beakjoon_register_user(self, ctx: interaction.ApplicationContext):
+    async def baekjoon_register_user(self, ctx: interaction.ApplicationContext):
         embed = self.embed_init
         embed.description = (
             "감자 챌린지의 `백준` 부분을 참가하기 위해서는 사용자 등록 과정이 필요합니다.\n"
@@ -133,7 +133,7 @@ class AddUser(BaseCog, UserRepository):
         components = interaction.ActionRow(components=[
             interaction.Button(
                 style=discord.ButtonStyle.primary,
-                custom_id="beakjoon_sumbit_id",
+                custom_id="baekjoon_sumbit_id",
                 label="등록"
             )
         ])

@@ -9,7 +9,7 @@ from sqlalchemy import String
 from models.database import Base
 
 
-class BeakjoonUserInfo(Base):
+class BaekjoonUserInfo(Base):
     __tablename__ = "beakjoonUserInfo"
 
     beakjoon_id: Mapped[str] = mapped_column(String(21), primary_key=True)
