@@ -13,7 +13,7 @@ class UserInfo(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     github_id: Mapped[str] = mapped_column(String(length=256), nullable=True)
-    beakjoon_id: Mapped[str] = mapped_column(String(length=21), nullable=True)
+    baekjoon_id: Mapped[str] = mapped_column(String(length=21), nullable=True)
 
     joined_at: Mapped[datetime.datetime] = mapped_column(default=func.now())
 

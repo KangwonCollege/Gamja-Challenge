@@ -1,5 +1,5 @@
 from .base import Base
-from .beakjoonUserInfo import BeakjoonUserInfo
-from .beakjoonUserLevel import BeakjoonUserLevel
+from .baekjoonUserInfo import BaekjoonUserInfo
+from .baekjoonUserLevel import BaekjoonUserLevel
 from .githubUserInfo import GithubUserInfo
 from .userInfo import UserInfo
