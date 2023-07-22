@@ -1,6 +1,7 @@
 import aiohttp
 
-class SolvedUserProfile():
+
+class SolvedUserProfile:
     def __init__(self) -> None:
         pass
     
