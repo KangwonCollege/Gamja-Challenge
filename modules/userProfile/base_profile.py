@@ -136,6 +136,15 @@ class BaseProfile:
         draw_img.text(xy=(290, 122), text=str(text[3]), fill=self.FONT_COLOR, font=self.font(12))
         return img
 
+    def get_img(self, url: str = None) -> Image:
+
+        return
+
+    def draw_img(self, img_url: str, base_img: Image.Image) -> Image:
+        img = self.get_img(img_url)
+        mask = Image.new("1", (106, 106), 1)
+        base_img.paste(im=img, box=(26, 37), mask=mask)
+
     @staticmethod
     def antialias(img: Image.Image) -> Image:
         # img.resize(
@@ -148,5 +157,5 @@ class BaseProfile:
 p = BaseProfile()
 im = p.user_profile_canvas
 im = p.tier(img=im, tier="bronze_3")
-im = p.draw_text(img=im, text=["Mule", "5555", 3, 3])
+im = p.draw_text(img=im, text=["Mule⸝ဗီူ⸜", "5555", 3, 3])
 im.show()
