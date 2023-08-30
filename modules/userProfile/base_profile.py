@@ -24,7 +24,6 @@ class BaseProfile:
         self.WIDTH = 500
         self.HEIGHT = 180
 
-    @property
     def _base(self) -> Image:
         return Image.new(
             mode="RGBA",
@@ -63,7 +62,6 @@ class BaseProfile:
     def font(font_size: int = 18, width: str = "Bold") -> ImageFont:
         return ImageFont.truetype(os.path.join(directory, "assets", f"Inter-{width}.ttf"), font_size)
 
-    @property
     def user_profile_canvas(self) -> Image:
         base_img = self._radius_base()
         draw_img = ImageDraw(base_img)
@@ -95,7 +93,7 @@ class BaseProfile:
         :param img: base_image
         :param tier: tierName_cnt ex: bronze_3
         tierName : {unrank, bronze, silver, gold, platinum, diamond}\n
-        cnt : {1, 2, 3}\n
+        cnt : {1, 2, 3}
         :return:
         """
         if img is None:
