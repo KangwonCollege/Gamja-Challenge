@@ -138,10 +138,22 @@ class BaseProfile:
 
         return
 
-    def draw_img(self, img_url: str, base_img: Image.Image) -> Image:
-        img = self.get_img(img_url)
-        mask = Image.new("1", (106, 106), 1)
+    def draw_img(self, img_url: str = None, base_img: Image.Image = user_profile_canvas) -> Image:
+        # img = self.get_img(img_url)
+        img = Image.open("testImg.png", "r")
+        img = img.resize((106, 106))
+        alpha_channel = img.split()[3]
+        mask = alpha_channel.point(lambda x: 0 if x < 128 else 1, '1')
+        img_2 = Image.new(mode="1", size=(106, 106), color=1)
+        draw_img2 = ImageDraw(img_2)
+        draw_img2.ellipse(xy=(0, 0, 106, 106), fill=0)
+        img_2 = img_2.point(lambda x: 0 if x < 128 else 1, '1')
+
+
+
         base_img.paste(im=img, box=(26, 37), mask=mask)
+
+        return img_2
 
     @staticmethod
     def antialias(img: Image.Image) -> Image:
@@ -155,5 +167,6 @@ class BaseProfile:
 p = BaseProfile()
 im = p.user_profile_canvas
 im = p.tier(img=im, tier="bronze_3")
-im = p.draw_text(img=im, text=["Mule⸝ဗီူ⸜", "5555", 3, 3])
+im = p.draw_text(img=im, text=["Mule", "5555", 3, 3])
+im = p.draw_img(base_img=im)
 im.show()
