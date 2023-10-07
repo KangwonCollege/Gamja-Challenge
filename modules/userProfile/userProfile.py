@@ -14,14 +14,13 @@ class UserProfile(BaekjoonUserInfo, GithubUserInfo, UserInfo):
         super().__init__()
 
     @staticmethod
-    async def _load_git_user_data(user, date) -> int:
+    async def load_git_user_data(user, date) -> int:
         git_url = "https://api.github.com/graphql"
 
         async with aiohttp.ClientSession() as session:
             token = get_config()["git_token"]
             with open(directory + "gitQuery.graphql", "r") as f:
                 query = f.read()
-
             header = {"Authorization": f"Bearer {token}"}
             variable = {
                 "login": f"{user}",
@@ -34,5 +33,3 @@ class UserProfile(BaekjoonUserInfo, GithubUserInfo, UserInfo):
 
         return result
 
-        def make_rank_profile(self, discord_name: str, discord_profile_img: discord.User.banner, ) -> Image:
-            BaekjoonUserInfo.baekjoon_id

@@ -1,1 +1,1 @@
-from .git_user_profile import UserProfile
+from .userProfile import UserProfile
