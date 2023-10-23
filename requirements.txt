@@ -7,3 +7,4 @@ discord.py
 Discord-Extension-Interaction
 discord~=2.3.1
 Pillow~=10.0.0
+numpy~=1.26.1

@@ -1,5 +1,4 @@
 import aiohttp
-from PIL import Image
 import discord
 
 from utils.getConfig import get_config
@@ -9,9 +8,9 @@ from models.database.githubUserInfo import GithubUserInfo
 from models.database.userInfo import UserInfo
 
 
-class UserProfile(BaekjoonUserInfo, GithubUserInfo, UserInfo):
+class LoadUserProfile:
     def __init__(self) -> None:
-        super().__init__()
+        pass
 
     @staticmethod
     async def load_git_user_data(user, date) -> int:

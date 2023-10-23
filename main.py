@@ -4,19 +4,15 @@ import discord
 import sqlalchemy
 from discord.ext import interaction
 from sqlalchemy import NullPool
-from sqlalchemy import MetaData
-from sqlalchemy.ext.asyncio import AsyncConnection
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from models import database as db_model
 from utils.getConfig import get_config
 
 
 if __name__ == "__main__":
     directory = os.path.dirname(os.path.abspath(__file__))
-    parser = get_config()
 
     bot = interaction.Client(
         intents=discord.Intents.default(),
@@ -25,7 +21,7 @@ if __name__ == "__main__":
     )
 
     # Database
-    database_parser = get_config("database")
+    database_parser = get_config(config_name="token")
     database_section = database_parser.get("Default", "database_section")
     database = {
         "drivername": "mysql+aiomysql",
@@ -45,4 +41,4 @@ if __name__ == "__main__":
     factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
     bot.load_extensions("cogs", directory=directory, factory=factory)
-    bot.run(parser.get("TOKEN", "discord_token"))
+    bot.run(database_parser.get("TOKEN", "discord_token"))

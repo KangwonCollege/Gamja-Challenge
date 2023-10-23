@@ -9,8 +9,8 @@ class BaseCog:
     def __init__(self, client: interaction.Client, factory: async_sessionmaker, used_repository: bool = True):
         self.client = client
         self.factory = factory
-        if used_repository:
-            super().__init__(self.factory)
+        # if used_repository:
+        #     super().__init__(self.factory)
 
     @property
     def embed_init(self) -> discord.Embed:
