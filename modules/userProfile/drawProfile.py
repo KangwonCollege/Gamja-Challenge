@@ -5,8 +5,9 @@ from PIL import Image
 from PIL.ImageDraw import ImageDraw
 from PIL import ImageFilter
 from PIL import ImageFont
+from urllib import request
 
-from models.database.userCalender import UserCalender
+from models.database.userInfo import UserInfo
 
 from utils.directory import directory
 
@@ -35,13 +36,15 @@ class DrawProfile:
         self.WIDTH = 500 * scope
         self.HEIGHT = 180 * scope
 
+        self.MARGIN = None
+
         self.user_image: str | Image | None = None
 
-    def _base_img(self) -> Image.Image:
-        return Image.new(
-            mode="RGBA",
-            size=(self.WIDTH, self.HEIGHT),
-            color=self.BACKGROUND_BASE_COLOR
+    @staticmethod
+    def _base_img() -> Image.Image:
+        return Image.open(
+            fp=os.path.join(directory, "assets", "profile", "background.png"),
+            mode="r"
         )
 
     @staticmethod
@@ -62,20 +65,23 @@ class DrawProfile:
 
     def user_profile(
             self,
+            profile_image_url: str = "",
             user_name: str = "UserName",
-            user_id: str = "0000000000",
+            user_id: str = "user_id",
             git_commit: str = "NnN",
             solved_commit: str = "NnN",
-            tier_name: str = "Unknown",
+            tier_name: str = "unranked",
             season: str = "Season 1",
     ) -> Image.Image:
         image = self._base_img()
         font_name = ImageFont.truetype(os.path.join(directory, "assets", "Inter-Bold.ttf"), size=28 * self.scope)
         font_sub1 = ImageFont.truetype(os.path.join(directory, "assets", "Pretendard-Regular.ttf"), size=8 * self.scope)
         font_sub2 = ImageFont.truetype(os.path.join(directory, "assets", "Inter-Bold.ttf"), size=13 * self.scope)
-        font_sub3 = ImageFont.truetype(os.path.join(directory, "assets", "Pretendard-Regular.ttf"), size=12 * self.scope)
-        profile_img = Image.open(os.path.join(directory, "assets", "tier_img", "gold_1.png"))
-        profile_img.resize(size=(profile_img.size[0] * self.scope, profile_img.size[1] * self.scope))
+        font_sub3 = ImageFont.truetype(os.path.join(directory, "assets", "Pretendard-Regular.ttf"),
+                                       size=12 * self.scope)
+        tire_img = Image.open(os.path.join(directory, "assets", "tier_img", f"{tier_name}.png"))
+        tire_img.resize(size=(tire_img.size[0] * self.scope, tire_img.size[1] * self.scope))
+        profile_image_path = os.path.join(directory, "assets", "dumpfile_profile.png")
 
         draw_img = ImageDraw(image)
 
@@ -88,7 +94,7 @@ class DrawProfile:
         )
 
         draw_img.text(
-            xy=(154*self.scope, 43*self.scope),
+            xy=(154 * self.scope, 43 * self.scope),
             text=user_name,
             font=font_name
         )
@@ -101,7 +107,7 @@ class DrawProfile:
 
         draw_img.text(
             xy=(154 * self.scope, 104 * self.scope),
-            text="Github Commit",
+            text="Github",
             font=font_sub2,
             fill=self.FONT_COLOR
         )
@@ -109,8 +115,7 @@ class DrawProfile:
         draw_img.text(
             xy=(154 * self.scope, 128 * self.scope),
             text=f"{git_commit} Commit",
-            font=font_sub3,
-            fill=self.FONT_COLOR
+            font=font_sub3
         )
 
         draw_img.text(
@@ -128,21 +133,22 @@ class DrawProfile:
         )
 
         draw_img.text(
-            xy=(435 * self.scope - 50, 109 * self.scope),
+            xy=(460 * self.scope - draw_img.textlength(text=tier_name, font=font_sub2)/2 - 40, 109 * self.scope),
             text=tier_name,
             font=font_sub2,
-            fill=self.FONT_COLOR
+            align="center"
         )
 
         draw_img.text(
-            xy=(436 * self.scope - 40, 132 * self.scope),
+            xy=(460 * self.scope - draw_img.textlength(text=season, font=font_sub3)/2 - 40, 132 * self.scope),
             text=season,
             font=font_sub3,
-            fill=self.FONT_COLOR
+            align="center"
         )
 
         draw_img.rectangle(
-            xy=((20*self.scope + 20, 40*self.scope), (20*self.scope+106*self.scope + 20, 40*self.scope+106*self.scope)),
+            xy=((20 * self.scope + 20, 40 * self.scope),
+                (20 * self.scope + 106 * self.scope + 20, 40 * self.scope + 106 * self.scope)),
             fill=self.OUTLINE_COLOR, width=5
         )
 
@@ -152,13 +158,21 @@ class DrawProfile:
             width=2
         )
 
-        image.paste(im=profile_img, box=(427*self.scope - 35, 40*self.scope), mask=profile_img.split()[3])
+        # image.paste(
+        #     im=profile_image,
+        #     box=(
+        #         20 * self.scope + 20, 40 * self.scope,
+        #         20 * self.scope + 106 * self.scope + 20, 40 * self.scope + 106 * self.scope
+        #     )
+        # )
+
+        image.paste(im=tire_img, box=(427 * self.scope - 35, 40 * self.scope), mask=tire_img.split()[3])
 
         return image
 
-    def user_calender(self, date_model: UserCalender = None) -> Image.Image:
+    def user_calender(self, date_model: UserInfo = None) -> Image.Image:
         grass = [
-            Image.new("RGBA", color=self.GRASS_1, size=(12*self.scope, 12*self.scope)),
+            Image.new("RGBA", color=self.GRASS_1, size=(12 * self.scope, 12 * self.scope)),
             Image.new("RGBA", color=self.GRASS_2, size=(12 * self.scope, 12 * self.scope)),
             Image.new("RGBA", color=self.GRASS_3, size=(12 * self.scope, 12 * self.scope)),
             Image.new("RGBA", color=self.GRASS_4, size=(12 * self.scope, 12 * self.scope)),
@@ -170,7 +184,7 @@ class DrawProfile:
 
         calender_image = ImageDraw(image)
         calender_image.text(
-            xy=(18*self.scope, 18*self.scope),
+            xy=(18 * self.scope, 18 * self.scope),
             text="Calender",
             font=font_name,
             fill=self.FONT_COLOR
@@ -179,7 +193,7 @@ class DrawProfile:
         calender_image.rectangle(
             xy=((0, 0), (self.WIDTH, self.HEIGHT)),
             outline=self.OUTLINE_COLOR,
-            width=5
+            width=3
         )
 
         point_x = 18 * self.scope
@@ -198,12 +212,6 @@ class DrawProfile:
 
 
 if __name__ == "__main__":
-    user_profile = DrawProfile()
-    img = user_profile.user_calender()
-    img2 = user_profile.user_profile()
+    draw_profile = DrawProfile()
+    img = draw_profile.user_calender()
     img.show()
-    img2.show()
-
-    img.save(os.path.join(directory, "assets", "user_calender.png"))
-    img2.save(os.path.join(directory, "assets", "user_profile.png"))
-
