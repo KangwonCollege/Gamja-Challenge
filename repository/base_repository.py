@@ -11,7 +11,7 @@ class BaseRepository:
 
     @property
     def session(self):
-        return self.factory()
+        return self.factory
 
     async def _session_execute(
             self,

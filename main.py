@@ -25,7 +25,7 @@ if __name__ == "__main__":
     )
 
     # Database
-    database_parser = get_config("database")
+    database_parser = get_config("token")
     database_section = database_parser.get("Default", "database_section")
     database = {
         "drivername": "mysql+aiomysql",
