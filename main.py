@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from models import database as db_model
 from utils.getConfig import get_config
 
 

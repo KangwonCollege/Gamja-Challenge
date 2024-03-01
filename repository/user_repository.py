@@ -1,3 +1,5 @@
+import typing
+
 import discord
 from sqlalchemy import Result
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -7,6 +9,9 @@ from sqlalchemy.sql import exists
 
 from models import database
 from repository.base_repository import BaseRepository
+
+
+T = typing.TypeVar("T")
 
 
 class UserRepository(BaseRepository):
@@ -50,3 +55,15 @@ class UserRepository(BaseRepository):
         author = self._get_user_id(author)
         result = await self._session_execute(self._get_participant_command, False, session, author=author)
         return result
+
+    async def insert_object(
+            self,
+            insert_data: T,
+            session: AsyncSession = None
+    ) -> None:
+        if session is None:
+            pass
+        table = database.BaekjoonUserInfo
+        async with self.session() as session:
+            async with session.begin():
+                session.add_all(insert_data)
