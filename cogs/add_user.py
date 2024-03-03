@@ -1,5 +1,6 @@
 import random
 import string
+import datetime
 
 import discord
 from discord.ext import interaction
@@ -10,6 +11,7 @@ from cogs.base_cog import BaseCog
 from modules import githubOauth2
 from modules import errors
 from repository.user_repository import UserRepository
+from models.database.userInfo import UserInfo
 from utils.getConfig import get_config
 
 parser = get_config()
@@ -20,6 +22,7 @@ class AddUser(BaseCog, UserRepository):
         super().__init__(bot, factory)
         self.bot = bot
         self.generated_state_key = []
+        self.id_keys = []
         self.client = githubOauth2.GithubOAuth2(
             client_id=parser.get('Github', 'client_id'),
             client_secret=parser.get('Github', 'client_secret')
@@ -40,6 +43,17 @@ class AddUser(BaseCog, UserRepository):
             return self.generate_state_key()
         self.generated_state_key.append(state_key)
         return state_key
+
+    def id_key(self) -> int:
+        state_key = ""
+        for _ in range(8):
+            state_key += str(random.randint(1, 9))
+
+        if state_key in self.id_keys:
+            return self.id_key()
+
+        self.id_keys.append(state_key)
+        return int(state_key)
 
     @interaction.command(name="시즌등록")
     async def add_user(self, ctx: interaction.ApplicationContext, account_type: str):
@@ -114,7 +128,17 @@ class AddUser(BaseCog, UserRepository):
             inline=embed.fields[0].inline
         )
         await ctx.edit(embed=embed, components=[components])
-        print(user_info.name)
+
+        user_input_data = UserInfo(
+            id=self.id_key(),
+            github_id=user_info.id,
+            joined_at=datetime.datetime.utcnow(),
+            experience=0,
+            tier="unranked"
+        )
+
+        await self.insert_object(insert_data=user_input_data)
+
         return user_info
 
     @add_user.subcommand(name="백준", description="백준 계정으로 시즌에 참가하려면 시즌등록 명령어를 이용해주세요.")

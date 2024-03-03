@@ -61,9 +61,10 @@ class UserRepository(BaseRepository):
             insert_data: T,
             session: AsyncSession = None
     ) -> None:
-        if session is None:
-            pass
-        table = database.BaekjoonUserInfo
+
         async with self.session() as session:
             async with session.begin():
-                session.add_all(insert_data)
+                session.add(insert_data)
+
+        await session.commit()
+        await session.close()
